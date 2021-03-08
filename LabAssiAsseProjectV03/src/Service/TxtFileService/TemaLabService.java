@@ -13,14 +13,14 @@ public class TemaLabService extends AbstractService<Integer,TemaLab> {
         if(sc<=Integer.parseInt(sp)){
             String sln=Integer.toString(Integer.parseInt(sl)+1) ;
             String[] params={nr,descr,sln,sp};
-            upd(params);
+            update(params);
         }
 
     }
-    /*
+
     @Override
-    public Student extractEntity(String[] info){
-        return new Student("","",2,"","");
+    protected TemaLab extractEntity(String[] params){
+        return new TemaLab(Integer.parseInt(params[0]),params[1],Integer.parseInt(params[2]),Integer.parseInt(params[3]));
     }
-    */
+
 }

@@ -3,15 +3,20 @@ package UI;
 import java.io.IOException;
 import java.util.Scanner;
 import Exceptions.*;
+import Service.Service;
+import Service.TxtFileService.NotaService;
+import Service.TxtFileService.StudentService;
+import Service.TxtFileService.TemaLabService;
 import Service.XMLFileService.AbstractXMLService;
 import Service.XMLFileService.NotaXMLService;
 import Service.XMLFileService.StudentXMLService;
 import Service.XMLFileService.TemaLabXMLService;
 
 public class ui {
-    StudentXMLService stdSrv;
-    TemaLabXMLService tmLbSrv;
-    NotaXMLService notaSrv;
+    Service stdSrv;
+    Service tmLbSrv;
+    Service notaSrv;
+
     public ui(StudentXMLService srv1,TemaLabXMLService srv2,NotaXMLService srv3){
         this.stdSrv=srv1;
         this.tmLbSrv=srv2;
@@ -19,7 +24,7 @@ public class ui {
 
     }
 
-    public ui(StudentXMLService srv1,TemaLabXMLService srv2,NotaXMLService srv3){
+    public ui(StudentService srv1, TemaLabService srv2, NotaService srv3){
         this.stdSrv=srv1;
         this.tmLbSrv=srv2;
         this.notaSrv=srv3;
@@ -32,7 +37,7 @@ public class ui {
     }
     */
 
-    public void printAllEntities(AbstractXMLService srv){
+    public void printAllEntities(Service srv){
         srv.findAll().forEach(x-> System.out.println(x));
     }
 
@@ -106,11 +111,20 @@ public class ui {
         System.out.println("Data:");
         data=scanner.nextLine();
         //scanner.nextLine();
-        String val1=notaSrv.depunctare(tmLbSrv,idt,val);
+        String val1;
+        if (notaSrv instanceof NotaXMLService) {
+            val1 = ((NotaXMLService) notaSrv).depunctare((TemaLabXMLService) tmLbSrv, idt, val);
+        } else {
+            val1 = ((NotaService) notaSrv).depunctare((TemaLabService) tmLbSrv, idt, val);
+        }
         String[] params={id,ids,idt,val1,data};
         try{
             notaSrv.add(params);
-            notaSrv.printAllNotes(tmLbSrv);
+            if (notaSrv instanceof NotaXMLService) {
+                ((NotaXMLService) notaSrv).printAllNotes((TemaLabXMLService) tmLbSrv);
+            } else {
+                ((NotaService) notaSrv).printAllNotes((TemaLabService) tmLbSrv);
+            }
         }catch (ValidatorException ex){
             System.out.println(ex.getMessage());
         } catch (IOException e) {
@@ -192,7 +206,11 @@ public class ui {
         scanner.nextLine();
         //String[] params={id,descr,saptLim,saptPred};
         try{
-            tmLbSrv.prelungireTemaLab(id,descr,saptLim,saptPred,saptCurenta);
+            if (tmLbSrv instanceof TemaLabXMLService) {
+                ((TemaLabXMLService)tmLbSrv).prelungireTemaLab(id, descr, saptLim, saptPred, saptCurenta);
+            } else {
+                ((TemaLabService)tmLbSrv).prelungireTemaLab(id, descr, saptLim, saptPred, saptCurenta);
+            }
         }catch (ValidatorException ex){
             System.out.println(ex.getMessage());
         }
